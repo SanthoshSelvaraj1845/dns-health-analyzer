@@ -11,10 +11,25 @@ from app.schemas import (
 )
 
 
-router = APIRouter(prefix="/api/v1", tags=["DNS Analysis"])
+router = APIRouter(
+    prefix="/api/v1",
+    tags=["DNS Analysis"],
+)
 
 
-@router.post("/analysis", response_model=AnalysisResponse)
+# Health Check
+@router.get("/health")
+def health_check():
+    return {
+        "status": "healthy"
+    }
+
+
+# Start DNS Analysis
+@router.post(
+    "/analysis",
+    response_model=AnalysisResponse,
+)
 def start_analysis(request: AnalysisRequest):
 
     analysis_id = str(uuid4())
@@ -67,6 +82,7 @@ def start_analysis(request: AnalysisRequest):
     }
 
 
+# Get DNS Analysis Result
 @router.get(
     "/analysis/{analysis_id}",
     response_model=AnalysisResultResponse,
@@ -89,3 +105,4 @@ def get_analysis(analysis_id: str):
         "status": analysis["status"],
         "result": analysis.get("result", {}),
     }
+

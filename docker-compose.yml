@@ -1,0 +1,9 @@
+services:
+  dns-health-analyzer:
+    build: .
+    container_name: dns-health-analyzer
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+
