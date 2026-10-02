@@ -1,57 +1,33 @@
 # DNS Health Analyzer
 
-A **FastAPI-based DNS Health Analyzer** that analyzes a domain's DNS records and DNSSEC configuration, evaluates its health status, and stores the analysis results in **MongoDB Atlas**.
+A **FastAPI-based DNS Health Analyzer** that analyzes a domain's DNS records, performs basic DNSSEC configuration detection, evaluates domain health, and stores analysis results in **MongoDB Atlas**.
 
-The application is containerized using **Docker** and deployed on **Render** as a public REST API.
+The project includes a responsive frontend dashboard and is deployed on **Render**.
 
 ## Features
 
-* DNS health analysis
-* DNS record analysis (A, AAAA, MX, etc.)
-* DNSSEC analysis
-* Unique `analysis_id` generation
-* MongoDB Atlas integration
-* REST API using FastAPI
-* Swagger API documentation
-* Input validation using Pydantic
-* Automated testing using pytest
-* Docker & Docker Compose support
-* Render cloud deployment
+- DNS record analysis: A, AAAA, MX, NS, TXT
+- Basic DNSSEC detection using DNSKEY and DS records
+- Domain health status
+- Unique `analysis_id` for every analysis
+- MongoDB Atlas integration
+- FastAPI REST API
+- Pydantic input validation
+- Swagger API documentation
+- Responsive HTML/CSS/JavaScript frontend
+- Pytest testing
+- Docker support
+- Render deployment
 
-## Architecture
+## Tech Stack
 
-
-Client / Swagger
-       |
-       v
-    FastAPI
-       |
-       v
- DNS Analyzer
-       |
-       +-------> DNS / DNSSEC
-       |
-       v
- MongoDB Atlas
-
-
-
-
-##  Technologies
-
-* Python
-* FastAPI
-* Pydantic
-* MongoDB Atlas
-* PyMongo
-* DNS / DNSSEC
-* Uvicorn
-* Pytest
-* Docker
-* Docker Compose
-* Git & GitHub
-* Render
-
+- **Backend:** Python, FastAPI, Pydantic, Uvicorn
+- **DNS:** dnspython
+- **Database:** MongoDB Atlas, PyMongo
+- **Frontend:** HTML, CSS, JavaScript, Jinja2
+- **Testing:** Pytest
+- **Deployment:** Docker, Render
+- **Version Control:** Git, GitHub
 
 ## API Endpoints
 
@@ -61,15 +37,7 @@ Client / Swagger
 GET /api/v1/health
 
 
-Response:
-
-
-{
-  "status": "healthy"
-}
-
-
-### Start Analysis
+### Start DNS Analysis
 
 
 POST /api/v1/analysis
@@ -99,68 +67,7 @@ Response:
 GET /api/v1/analysis/{analysis_id}
 
 
-
-
-## Database
-
-**MongoDB Atlas**
-
-
-Database: dns_health_db
-Collection: analyses
-
-
-Analysis requests and results are stored in MongoDB.
-
-
-
-## Run with Docker
-
-Build and start the application:
-
-
-docker compose up --build
-
-
-Local API:
-
-
-http://localhost:8000
-
-
-Swagger:
-
-
-http://localhost:8000/docs
-
-
-
-
-## Testing
-
-Run the test suite:
-
-
-pytest
-
-
-
-
-## Live Deployment
-
-**Live API:**
-
-https://dns-health-analyzer.onrender.com
-
-**Swagger Documentation:**
-
-https://dns-health-analyzer.onrender.com/docs
-
-**Health Check:**
-
-https://dns-health-analyzer.onrender.com/api/v1/health
-
-
+Returns the stored DNS records, health status, and DNSSEC information.
 
 ## Project Structure
 
@@ -172,20 +79,21 @@ dns-health-analyzer/
 │   ├── routes.py
 │   ├── schemas.py
 │   ├── database.py
+│   ├── config.py
 │   └── dns_analyzer.py
 │
-├── tests/
-│   ├── test_analysis.py
-│   ├── test_database.py
-│   └── test_health.py
+├── static/
+│   ├── style.css
+│   └── script.js
 │
+├── templates/
+│   └── index.html
+│
+├── tests/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
-├── .gitignore
 └── README.md
-
-
 
 
 ## Environment Variables
@@ -197,18 +105,80 @@ MONGODB_URL=your_mongodb_connection_string
 DATABASE_NAME=dns_health_db
 
 
-> `.env` and database credentials must not be committed to GitHub.
+> Do not commit `.env` or database credentials to GitHub.
+
+## Run Locally
+
+Install dependencies:
 
 
-## Project Status
+pip install -r requirements.txt
 
-* DNS Analysis
-* DNSSEC Analysis
-* FastAPI REST API
-* MongoDB Atlas
-* Pytest
-* Docker
-* GitHub
-* Render Deployment
 
-**Status: Successfully deployed and running.**
+Start the application:
+
+
+uvicorn app.main:app --reload
+
+
+Open:
+
+
+http://127.0.0.1:8000
+
+
+Swagger documentation:
+
+
+http://127.0.0.1:8000/docs
+
+
+## Docker
+
+
+docker compose up --build
+
+
+## Testing
+
+
+pytest
+
+
+## Live Deployment
+
+**Live Application:**  
+https://dns-health-analyzer.onrender.com
+
+**Swagger API:**  
+https://dns-health-analyzer.onrender.com/docs
+
+**Health Check:**  
+https://dns-health-analyzer.onrender.com/api/v1/health
+
+## Application Flow
+
+
+User enters domain
+        ↓
+FastAPI API
+        ↓
+DNS / DNSSEC Analysis
+        ↓
+MongoDB Atlas
+        ↓
+Analysis ID
+        ↓
+Retrieve Result
+        ↓
+Frontend Dashboard
+
+
+## DNSSEC Note
+
+The current implementation performs basic DNSSEC configuration detection using **DNSKEY and DS records**. It does not perform full cryptographic DNSSEC chain-of-trust validation.
+
+## Status
+
+**Successfully developed, tested, containerized, and deployed on Render.**
+
