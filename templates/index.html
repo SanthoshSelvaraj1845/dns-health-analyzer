@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="DNS Health Analyzer - Analyze DNS records and DNSSEC configuration"
+    >
+
+    <title>DNS Health Analyzer</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                <div class="logo-icon">DNS</div>
+
+                <div>
+                    <h2>DNS Health</h2>
+                    <span>Analyzer</span>
+                </div>
+            </div>
+
+            <div class="api-status">
+                <span class="status-dot"></span>
+                API Online
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+    <main class="main-container">
+
+        <section class="hero">
+
+            <div class="hero-badge">
+                Domain Intelligence Platform
+            </div>
+
+            <h1>
+                Check Your Domain
+                <span>DNS Health</span>
+            </h1>
+
+            <p>
+                Analyze DNS records, DNSSEC configuration and domain
+                health from one simple dashboard.
+            </p>
+
+
+            <!-- SEARCH -->
+            <div class="search-card">
+
+                <div class="search-box">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        id="domainInput"
+                        placeholder="Enter domain — example.com"
+                        autocomplete="off"
+                    >
+
+                    <button id="analyzeButton">
+                        Analyze Domain
+                    </button>
+
+                </div>
+
+                <p class="search-hint">
+                    Enter a domain without http:// or https://
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             LOADING
+        ========================== -->
+        <section
+            id="loadingSection"
+            class="loading-section hidden"
+        >
+
+            <div class="spinner"></div>
+
+            <h3>Analyzing DNS configuration...</h3>
+
+            <p>
+                Checking DNS records and DNSSEC configuration.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             ERROR
+        ========================== -->
+        <section
+            id="errorSection"
+            class="error-card hidden"
+        >
+
+            <div class="error-icon">!</div>
+
+            <div>
+                <h3>Analysis Failed</h3>
+                <p id="errorMessage">
+                    Unable to analyze this domain.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             RESULTS
+        ========================== -->
+        <section
+            id="resultsSection"
+            class="results-section hidden"
+        >
+
+            <!-- RESULT HEADER -->
+
+            <div class="result-header">
+
+                <div>
+                    <p class="small-label">
+                        ANALYSIS RESULT
+                    </p>
+
+                    <h2 id="domainName">
+                        example.com
+                    </h2>
+                </div>
+
+                <div
+                    id="healthBadge"
+                    class="health-badge healthy"
+                >
+                    <span></span>
+                    HEALTHY
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 SUMMARY CARDS
+            ========================== -->
+
+            <div class="summary-grid">
+
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        ✓
+                    </div>
+
+                    <div>
+                        <p>Health Status</p>
+
+                        <h3 id="healthStatus">
+                            Healthy
+                        </h3>
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        DNS
+                    </div>
+
+                    <div>
+                        <p>DNS Records</p>
+
+                        <h3 id="recordCount">
+                            0
+                        </h3>
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        🔒
+                    </div>
+
+                    <div>
+                        <p>DNSSEC</p>
+
+                        <h3 id="dnssecStatus">
+                            Checking
+                        </h3>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 DNS RECORDS
+            ========================== -->
+
+            <div class="details-card">
+
+                <div class="card-heading">
+
+                    <div>
+                        <p class="small-label">
+                            DOMAIN CONFIGURATION
+                        </p>
+
+                        <h2>DNS Records</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="records-container">
+
+                    <!-- A RECORD -->
+
+                    <div class="record-row">
+
+                        <div class="record-type type-a">
+                            A
+                        </div>
+
+                        <div class="record-content">
+
+                            <h4>A Records</h4>
+
+                            <div id="aRecords">
+                                No records
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AAAA RECORD -->
+
+                    <div class="record-row">
+
+                        <div class="record-type type-aaaa">
+                            AAAA
+                        </div>
+
+                        <div class="record-content">
+
+                            <h4>AAAA Records</h4>
+
+                            <div id="aaaaRecords">
+                                No records
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MX RECORD -->
+
+                    <div class="record-row">
+
+                        <div class="record-type type-mx">
+                            MX
+                        </div>
+
+                        <div class="record-content">
+
+                            <h4>Mail Servers</h4>
+
+                            <div id="mxRecords">
+                                No records
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- NS RECORD -->
+
+                    <div class="record-row">
+
+                        <div class="record-type type-ns">
+                            NS
+                        </div>
+
+                        <div class="record-content">
+
+                            <h4>Name Servers</h4>
+
+                            <div id="nsRecords">
+                                No records
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TXT RECORD -->
+
+                    <div class="record-row">
+
+                        <div class="record-type type-txt">
+                            TXT
+                        </div>
+
+                        <div class="record-content">
+
+                            <h4>TXT Records</h4>
+
+                            <div id="txtRecords">
+                                No records
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 DNSSEC
+            ========================== -->
+
+            <div class="details-card">
+
+                <div class="card-heading">
+
+                    <div>
+                        <p class="small-label">
+                            SECURITY
+                        </p>
+
+                        <h2>DNSSEC Status</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="dnssec-content">
+
+                    <div class="security-icon">
+                        🔐
+                    </div>
+
+                    <div>
+
+                        <h3 id="dnssecTitle">
+                            DNSSEC Information
+                        </h3>
+
+                        <p id="dnssecDescription">
+                            DNSSEC analysis information will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 ANALYSIS INFORMATION
+            ========================== -->
+
+            <div class="details-card">
+
+                <p class="small-label">
+                    ANALYSIS INFORMATION
+                </p>
+
+                <div class="analysis-info">
+
+                    <div>
+
+                        <span>Analysis ID</span>
+
+                        <code id="analysisId">
+                            -
+                        </code>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>Domain</span>
+
+                        <strong id="analysisDomain">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>Status</span>
+
+                        <strong id="analysisStatus">
+                            Completed
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            DNS Health Analyzer • FastAPI • MongoDB • DNSSEC
+        </p>
+
+    </footer>
+
+
+    <script src="/static/script.js"></script>
+
+</body>
+
+</html>
